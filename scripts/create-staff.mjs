@@ -118,13 +118,16 @@ async function runWrangler(sql, remote) {
   await writeFile(tmpFile, sql, 'utf8');
 
   const args = ['wrangler', 'd1', 'execute', 'jimmys', remote ? '--remote' : '--local', '--file', tmpFile];
-  // On Windows, `npx` ships as `npx.cmd`; node's spawn won't resolve the shim
-  // by bare name.
-  const cmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+  // On Windows, `npx` ships as `npx.cmd`. Since Node 20.12.2 (CVE-2024-27980),
+  // spawning a .cmd/.bat file without shell:true throws EINVAL. The only arg
+  // going through cmd.exe now is a plain temp-file path, so there's nothing
+  // for the shell to re-tokenize.
+  const isWindows = process.platform === 'win32';
+  const cmd = isWindows ? 'npx.cmd' : 'npx';
 
   try {
     await new Promise((resolve, reject) => {
-      const p = spawn(cmd, args, { stdio: 'inherit' });
+      const p = spawn(cmd, args, { stdio: 'inherit', shell: isWindows });
       p.on('error', (err) => reject(err));
       p.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`wrangler exited ${code}`))));
     });
