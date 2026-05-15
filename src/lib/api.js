@@ -36,6 +36,7 @@ export const publicApi = {
   event: (id) => api.get(`/events/${id}`),
   rsvp: (id, data) => api.post(`/events/${id}/rsvp`, data),
   cotmCurrent: () => api.get('/cotm/current'),
+  humidor: () => api.get('/humidor'),
   newsletterSubscribe: (email) => api.post('/newsletter/subscribe', { email }),
 };
 
@@ -60,4 +61,12 @@ export const adminApi = {
   subscribers: () => api.get('/admin/newsletter/subscribers'),
   removeSubscriber: (id) => api.del(`/admin/newsletter/subscribers/${id}`),
   exportSubscribers: () => api.get('/admin/newsletter/subscribers?format=csv'),
+
+  cigars: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return api.get(`/admin/cigars${qs ? '?' + qs : ''}`);
+  },
+  cigar: (id) => api.get(`/admin/cigars/${id}`),
+  updateCigar: (id, data) => api.put(`/admin/cigars/${id}`, data),
+  imports: () => api.get('/admin/inventory/imports'),
 };

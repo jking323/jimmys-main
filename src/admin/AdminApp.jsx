@@ -9,6 +9,9 @@ import EventEditor from './EventEditor.jsx';
 import EventRsvps from './EventRsvps.jsx';
 import Cotm from './Cotm.jsx';
 import Newsletter from './Newsletter.jsx';
+import Cigars from './Cigars.jsx';
+import CigarEditor from './CigarEditor.jsx';
+import Imports from './Imports.jsx';
 
 export default function AdminApp() {
   const [user, setUser] = useState(null);
@@ -42,6 +45,9 @@ export default function AdminApp() {
         <Route path="events/new" element={<EventEditor />} />
         <Route path="events/:id" element={<EventEditor />} />
         <Route path="events/:id/rsvps" element={<EventRsvps />} />
+        <Route path="cigars" element={<Cigars />} />
+        <Route path="cigars/:id" element={<CigarEditor />} />
+        <Route path="inventory" element={<Imports />} />
         <Route path="cotm" element={<Cotm />} />
         <Route path="newsletter" element={<Newsletter />} />
         <Route path="login" element={<Navigate to=".." replace />} />

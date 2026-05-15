@@ -1,0 +1,9 @@
+# Copy this file to `.dev.vars` (gitignored) and fill in values for local dev.
+# These are picked up automatically by `wrangler pages dev`.
+
+# Token your cron job (or `curl`) sends in the Authorization header
+# when POSTing CSVs to /api/inventory/import. Any random string works locally.
+INVENTORY_IMPORT_TOKEN=local-dev-token-change-me
+
+# Optional — override the POS column mapping. Defaults to Square's columns.
+# INVENTORY_CSV_MAPPING={"pos_id":"Product ID","sku":"UPC","pos_name":"Description","qty_prefix":"On Hand","price":"Retail","cost":"Cost"}
