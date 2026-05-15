@@ -10,6 +10,9 @@
 
 import { spawn } from 'node:child_process';
 import { randomBytes, pbkdf2Sync } from 'node:crypto';
+import { writeFile, unlink } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 
@@ -108,16 +111,26 @@ function sqlEscape(s) {
 }
 
 async function runWrangler(sql, remote) {
-  const args = ['wrangler', 'd1', 'execute', 'jimmys', remote ? '--remote' : '--local', '--command', sql];
+  // Pass the SQL via a temp file rather than --command. On Windows, passing a
+  // long quoted argument through cmd.exe gets re-tokenized on spaces and
+  // commas and the SQL is destroyed. A file path has no such hazards.
+  const tmpFile = join(tmpdir(), `jimmys-staff-${process.pid}-${Date.now()}.sql`);
+  await writeFile(tmpFile, sql, 'utf8');
+
+  const args = ['wrangler', 'd1', 'execute', 'jimmys', remote ? '--remote' : '--local', '--file', tmpFile];
   // On Windows, `npx` ships as `npx.cmd`; node's spawn won't resolve the shim
-  // without help. Either point at the right binary or run through the shell.
-  const isWindows = process.platform === 'win32';
-  const cmd = isWindows ? 'npx.cmd' : 'npx';
-  return new Promise((resolve, reject) => {
-    const p = spawn(cmd, args, { stdio: 'inherit', shell: isWindows });
-    p.on('error', (err) => reject(err));
-    p.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`wrangler exited ${code}`))));
-  });
+  // by bare name.
+  const cmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+
+  try {
+    await new Promise((resolve, reject) => {
+      const p = spawn(cmd, args, { stdio: 'inherit' });
+      p.on('error', (err) => reject(err));
+      p.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`wrangler exited ${code}`))));
+    });
+  } finally {
+    await unlink(tmpFile).catch(() => {});
+  }
 }
 
 async function main() {
