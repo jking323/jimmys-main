@@ -109,8 +109,13 @@ function sqlEscape(s) {
 
 async function runWrangler(sql, remote) {
   const args = ['wrangler', 'd1', 'execute', 'jimmys', remote ? '--remote' : '--local', '--command', sql];
+  // On Windows, `npx` ships as `npx.cmd`; node's spawn won't resolve the shim
+  // without help. Either point at the right binary or run through the shell.
+  const isWindows = process.platform === 'win32';
+  const cmd = isWindows ? 'npx.cmd' : 'npx';
   return new Promise((resolve, reject) => {
-    const p = spawn('npx', args, { stdio: 'inherit' });
+    const p = spawn(cmd, args, { stdio: 'inherit', shell: isWindows });
+    p.on('error', (err) => reject(err));
     p.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`wrangler exited ${code}`))));
   });
 }
