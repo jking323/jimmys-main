@@ -1,0 +1,28 @@
+{
+  "name": "jimmys-cigar-lounge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "dev:pages": "wrangler pages dev -- npm run dev",
+    "db:apply:local": "wrangler d1 migrations apply jimmys --local",
+    "db:apply:remote": "wrangler d1 migrations apply jimmys --remote",
+    "db:exec:local": "wrangler d1 execute jimmys --local --command",
+    "db:seed:local": "wrangler d1 execute jimmys --local --file=./migrations/seed.sql",
+    "create-staff": "node ./scripts/create-staff.mjs",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name=jimmys"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.6",
+    "wrangler": "^3.78.0"
+  }
+}
