@@ -1,0 +1,12 @@
+name = "jimmys"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "jimmys"
+database_id = "REPLACE_ME_AFTER_D1_CREATE"
+
+[vars]
+SITE_URL = "http://localhost:5173"
+SESSION_COOKIE_NAME = "jimmys_session"
