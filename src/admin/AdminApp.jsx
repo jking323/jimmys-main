@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { adminApi } from '../lib/api.js';
 import AdminLayout from './AdminLayout.jsx';
 import Login from './Login.jsx';
+import Setup from './Setup.jsx';
 import Dashboard from './Dashboard.jsx';
 import EventsList from './EventsList.jsx';
 import EventEditor from './EventEditor.jsx';
@@ -15,13 +16,26 @@ import Imports from './Imports.jsx';
 
 export default function AdminApp() {
   const [user, setUser] = useState(null);
+  const [needsSetup, setNeedsSetup] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    adminApi.me()
-      .then((data) => setUser(data.user))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    (async () => {
+      try {
+        const me = await adminApi.me();
+        setUser(me.user);
+      } catch {
+        // Not signed in — check whether anyone exists yet.
+        try {
+          const status = await adminApi.setupStatus();
+          setNeedsSetup(!!status.needs_setup);
+        } catch {
+          // If setup-status fails too, fall through to the login page.
+        }
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   if (loading) {
@@ -29,6 +43,9 @@ export default function AdminApp() {
   }
 
   if (!user) {
+    if (needsSetup) {
+      return <Setup onComplete={(u) => { setUser(u); setNeedsSetup(false); }} />;
+    }
     return (
       <Routes>
         <Route path="login" element={<Login onLogin={setUser} />} />

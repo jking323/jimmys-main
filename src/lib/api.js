@@ -42,6 +42,8 @@ export const publicApi = {
 
 export const adminApi = {
   me: () => api.get('/auth/me'),
+  setupStatus: () => api.get('/auth/setup'),
+  setup: (data) => api.post('/auth/setup', data),
   login: (email, password) => api.post('/auth/login', { email, password }),
   logout: () => api.post('/auth/logout'),
 
