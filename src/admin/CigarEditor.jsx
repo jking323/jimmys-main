@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { adminApi } from '../lib/api.js';
+import PhotoUpload from '../components/PhotoUpload.jsx';
 
 function fmtPrice(p) {
   if (p == null) return '—';
@@ -148,6 +149,26 @@ export default function CigarEditor() {
           </div>
         </div>
 
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div className="card" style={{ padding: 22 }}>
+          <div className="eyebrow brass" style={{ marginBottom: 12 }}>Photo</div>
+          <PhotoUpload
+            pathPrefix={`cigars/${cigar.pos_id}/main`}
+            currentPath={cigar.photo_path}
+            version={cigar.updated_at}
+            hint="Square / box shot, 1600px wide JPEG works well."
+            onUploaded={async (path) => {
+              const res = await adminApi.updateCigar(id, { photo_path: path });
+              setCigar(res.cigar);
+            }}
+            onCleared={async () => {
+              if (cigar.photo_path) await adminApi.deleteMedia(cigar.photo_path).catch(() => {});
+              const res = await adminApi.updateCigar(id, { photo_path: null });
+              setCigar(res.cigar);
+            }}
+          />
+        </div>
+
         <div className="card" style={{ padding: 24 }}>
           <div className="eyebrow brass">Live from the POS</div>
           <p className="mute" style={{ fontSize: 12, marginTop: 6 }}>Read-only — overwritten on every sync.</p>
@@ -187,6 +208,7 @@ export default function CigarEditor() {
               <div style={{ fontSize: 13 }}>{fmtSyncedAt(cigar.last_synced_at)}</div>
             </div>
           </div>
+        </div>
         </div>
       </div>
 

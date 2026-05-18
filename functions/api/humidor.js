@@ -3,7 +3,8 @@ import { json } from '../_shared/response.js';
 export async function onRequestGet({ env }) {
   const featured = await env.DB.prepare(
     `SELECT id, sku, pos_name, display_name, brand, vitola, origin, wrapper,
-            strength, tasting_notes, qty, price, slug, featured, last_synced_at
+            strength, tasting_notes, qty, price, slug, featured, photo_path,
+            last_synced_at
        FROM cigars
       WHERE show_on_site = 1 AND qty > 0
       ORDER BY featured DESC, COALESCE(sort_order, 999999) ASC, qty ASC

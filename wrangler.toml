@@ -7,6 +7,10 @@ binding = "DB"
 database_name = "jimmys"
 database_id = "REPLACE_ME_AFTER_D1_CREATE"
 
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "jimmys-media"
+
 [vars]
 SITE_URL = "http://localhost:5173"
 SESSION_COOKIE_NAME = "jimmys_session"

@@ -1,4 +1,36 @@
+import { useEffect, useState } from 'react';
 import { Photo, SmokeCurl, Stamp } from './primitives.jsx';
+import { publicApi } from '../lib/api.js';
+
+function formatTime12(hhmm) {
+  if (!hhmm) return '';
+  const [h, m] = hhmm.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return m ? `${h12}:${String(m).padStart(2, '0')} ${ampm}` : `${h12} ${ampm}`;
+}
+
+function OpenIndicator() {
+  const [status, setStatus] = useState(null);
+  useEffect(() => {
+    publicApi.hours().then((d) => setStatus(d.status)).catch(() => {});
+  }, []);
+  if (!status) return null;
+  if (status.is_open) {
+    return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--ink-mute)', fontSize: 14 }}>
+        <span className="dot live"></span>
+        Open now — until {formatTime12(status.closes_at)}
+      </span>
+    );
+  }
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--ink-mute)', fontSize: 14 }}>
+      <span className="dot" style={{ background: 'var(--ember)' }}></span>
+      Closed right now
+    </span>
+  );
+}
 
 export default function Hero() {
   return (
@@ -24,10 +56,7 @@ export default function Hero() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 36, flexWrap: 'wrap' }}>
               <a href="#visit" className="btn btn-primary">Visit us tonight <span style={{ fontSize: 18 }}>→</span></a>
               <a href="#events" className="btn btn-ghost">See what's on</a>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--ink-mute)', fontSize: 14 }}>
-                <span className="dot live"></span>
-                Open now — until midnight
-              </span>
+              <OpenIndicator />
             </div>
             <div style={{ marginTop: 48, display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
               <div>

@@ -24,6 +24,7 @@ export default function AdminLayout({ user, onLogout }) {
           <NavLink to="/admin/events" className={({ isActive }) => (isActive ? 'active' : '')}>Events</NavLink>
           <NavLink to="/admin/cigars" className={({ isActive }) => (isActive ? 'active' : '')}>Humidor</NavLink>
           <NavLink to="/admin/cotm" className={({ isActive }) => (isActive ? 'active' : '')}>Cigar of the Month</NavLink>
+          <NavLink to="/admin/hours" className={({ isActive }) => (isActive ? 'active' : '')}>Hours</NavLink>
           <NavLink to="/admin/newsletter" className={({ isActive }) => (isActive ? 'active' : '')}>Newsletter</NavLink>
           <NavLink to="/admin/inventory" className={({ isActive }) => (isActive ? 'active' : '')}>POS sync</NavLink>
         </nav>

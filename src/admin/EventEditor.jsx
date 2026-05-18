@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { adminApi } from '../lib/api.js';
+import PhotoUpload from '../components/PhotoUpload.jsx';
 
 const EMPTY = {
   title: '',
@@ -13,6 +14,8 @@ const EMPTY = {
   tag_kind: '',
   featured: false,
   published: true,
+  photo_path: null,
+  slug: null,
 };
 
 function toLocalDatetimeInput(iso) {
@@ -52,6 +55,8 @@ export default function EventEditor() {
           tag_kind: event.tag_kind || '',
           featured: !!event.featured,
           published: !!event.published,
+          photo_path: event.photo_path || null,
+          slug: event.slug || null,
         });
       })
       .catch((e) => setError(e.message))
@@ -79,6 +84,7 @@ export default function EventEditor() {
       tag_kind: form.tag_kind || null,
       featured: form.featured,
       published: form.published,
+      photo_path: form.photo_path || null,
     };
     try {
       if (isNew) {
@@ -114,6 +120,42 @@ export default function EventEditor() {
       </div>
 
       {error && <div style={{ color: 'var(--ember)', marginBottom: 14 }}>{error}</div>}
+
+      {!isNew && form.slug && (
+        <div className="card" style={{ padding: 22, marginBottom: 16 }}>
+          <div className="eyebrow brass" style={{ marginBottom: 12 }}>Photo</div>
+          <PhotoUpload
+            pathPrefix={`events/${form.slug}`}
+            currentPath={form.photo_path}
+            hint="Use a wide, low-light shot — it'll fill the left half of the featured card."
+            onUploaded={async (path) => {
+              setForm((f) => ({ ...f, photo_path: path }));
+              await adminApi.updateEvent(id, { ...form, photo_path: path,
+                start_at: fromLocalDatetimeInput(form.start_at),
+                end_at: form.end_at ? fromLocalDatetimeInput(form.end_at) : null,
+                seats_total: form.seats_total === '' ? null : Number(form.seats_total),
+              });
+            }}
+            onCleared={async () => {
+              if (form.photo_path) await adminApi.deleteMedia(form.photo_path).catch(() => {});
+              setForm((f) => ({ ...f, photo_path: null }));
+              await adminApi.updateEvent(id, { ...form, photo_path: null,
+                start_at: fromLocalDatetimeInput(form.start_at),
+                end_at: form.end_at ? fromLocalDatetimeInput(form.end_at) : null,
+                seats_total: form.seats_total === '' ? null : Number(form.seats_total),
+              });
+            }}
+          />
+          <p className="mute" style={{ fontSize: 12, marginTop: 10 }}>
+            Photo uploads save right away. Other field changes need the "Save event" button.
+          </p>
+        </div>
+      )}
+      {isNew && (
+        <div className="card" style={{ padding: 22, marginBottom: 16 }}>
+          <p className="mute" style={{ fontSize: 13, margin: 0 }}>Save the event first, then a photo upload box will appear here.</p>
+        </div>
+      )}
 
       <div className="card" style={{ padding: 28 }}>
         <div className="form-grid">

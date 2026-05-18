@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Photo, SectionHead, Stamp } from './primitives.jsx';
-import { publicApi } from '../lib/api.js';
+import { mediaUrl, publicApi } from '../lib/api.js';
 
 function statusFor(qty) {
   return qty <= 3 ? 'last' : qty <= 8 ? 'low' : qty <= 20 ? 'fresh' : 'plenty';
@@ -29,7 +29,18 @@ function StockCard({ cigar }) {
           <Stamp rot={6} color="var(--ember)">Last few</Stamp>
         </div>
       )}
-      <Photo label="cigar" sub={name.split(' ').slice(0, 2).join(' ').toLowerCase()} style={{ height: 120 }} />
+      {cigar.photo_path ? (
+        <div style={{ height: 120, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--line)' }}>
+          <img
+            src={mediaUrl(cigar.photo_path, cigar.last_synced_at)}
+            alt={name}
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        </div>
+      ) : (
+        <Photo label="cigar" sub={name.split(' ').slice(0, 2).join(' ').toLowerCase()} style={{ height: 120 }} />
+      )}
 
       <div style={{ flex: 1 }}>
         {origin && <div className="eyebrow" style={{ fontSize: 10, marginBottom: 6 }}>{origin}</div>}

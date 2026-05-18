@@ -7,14 +7,14 @@ export async function onRequestGet({ params, env }) {
   if (!Number.isNaN(id)) {
     row = await env.DB.prepare(
       `SELECT id, slug, title, blurb, start_at, end_at, price_text, seats_total,
-              tag, tag_kind, featured
+              tag, tag_kind, featured, photo_path
        FROM events
        WHERE id = ? AND published = 1`,
     ).bind(id).first();
   } else {
     row = await env.DB.prepare(
       `SELECT id, slug, title, blurb, start_at, end_at, price_text, seats_total,
-              tag, tag_kind, featured
+              tag, tag_kind, featured, photo_path
        FROM events
        WHERE slug = ? AND published = 1`,
     ).bind(params.id).first();

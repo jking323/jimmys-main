@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HandArrow, Photo, SectionHead } from './primitives.jsx';
-import { publicApi } from '../lib/api.js';
+import { mediaUrl, publicApi } from '../lib/api.js';
 
 const MONTH_ABBR = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 const DAY_NAME = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -98,8 +98,17 @@ function EventCard({ event, featured = false }) {
   if (featured) {
     return (
       <div className="card" style={{ padding: 0, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 0 }}>
-        <div style={{ position: 'relative' }}>
-          <Photo label="Featured event photo" sub={event.title} style={{ height: '100%', minHeight: 380, borderRadius: 0, border: 'none', borderRight: '1px solid var(--line)' }} />
+        <div style={{ position: 'relative', minHeight: 380, borderRight: '1px solid var(--line)' }}>
+          {event.photo_path ? (
+            <img
+              src={mediaUrl(event.photo_path)}
+              alt={event.title}
+              loading="lazy"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}
+            />
+          ) : (
+            <Photo label="Featured event photo" sub={event.title} style={{ height: '100%', minHeight: 380, borderRadius: 0, border: 'none' }} />
+          )}
           {event.tag && (
             <div style={{ position: 'absolute', top: 20, left: 20 }}>
               <span className={`chip ${chipClass}`} style={{ background: 'var(--bg)', fontSize: 11, padding: '6px 13px' }}>

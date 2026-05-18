@@ -28,6 +28,33 @@ One `cigars` table with two categories of columns:
 
 `pos_id` is the stable join key (Square's `Token`). SKUs that disappear from a new full snapshot get `qty=0` and `removed_at` set automatically.
 
+## Photos (R2)
+
+Photos live in a Cloudflare R2 bucket named `jimmys-media` (binding: `MEDIA`). Path conventions:
+
+| Where | Path |
+|---|---|
+| Cigar | `cigars/<pos_id>/main.<ext>` |
+| Event | `events/<slug>.<ext>` |
+| Cigar of the Month | `cotm/<YYYY-MM>.<ext>` |
+| Hero / site chrome | `site/<name>.<ext>` |
+
+Allowed extensions: `.jpg .jpeg .png .webp .avif .gif`. Max 8 MB per file.
+
+Upload happens through the portal — each editor has a photo widget. The widget POSTs to `/api/admin/upload?path=...`. Photos are served via `/api/media/<path>` (cached at the edge for a day).
+
+To create the bucket the first time:
+
+```bash
+npx wrangler r2 bucket create jimmys-media
+```
+
+## Hours
+
+Hours are stored in `business_hours` (one row per day, 0=Sun .. 6=Sat) with `hours_overrides` for one-off changes (holidays, weather closures). The lounge's timezone is hardcoded to `America/New_York` in `functions/_shared/hours.js`.
+
+Edit hours at `/admin/hours`. The public Visit section and Hero "Open now" indicator both pull from `/api/hours`, with the open/closed decision computed server-side in lounge-local time.
+
 ## Local setup
 
 1. Install deps:

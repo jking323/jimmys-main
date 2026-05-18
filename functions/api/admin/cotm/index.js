@@ -4,7 +4,7 @@ export async function onRequestGet({ env }) {
   const { results } = await env.DB.prepare(
     `SELECT id, month, name, italic_word, blurb, quote, quote_by,
             origin, strength, smoke_time, price_regular, price_special, stock,
-            is_current, created_at, updated_at
+            is_current, photo_path, created_at, updated_at
      FROM cotm ORDER BY month DESC`,
   ).all();
   return json({ cotm: results || [] });
@@ -28,14 +28,15 @@ export async function onRequestPost({ request, env }) {
 
   await env.DB.prepare(
     `INSERT INTO cotm (month, name, italic_word, blurb, quote, quote_by,
-                       origin, strength, smoke_time, price_regular, price_special, stock, is_current)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                       origin, strength, smoke_time, price_regular, price_special,
+                       stock, is_current, photo_path)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(month) DO UPDATE SET
        name=excluded.name, italic_word=excluded.italic_word, blurb=excluded.blurb,
        quote=excluded.quote, quote_by=excluded.quote_by, origin=excluded.origin,
        strength=excluded.strength, smoke_time=excluded.smoke_time,
        price_regular=excluded.price_regular, price_special=excluded.price_special,
-       stock=excluded.stock,
+       stock=excluded.stock, photo_path=excluded.photo_path,
        is_current=CASE WHEN ?>0 THEN 1 ELSE cotm.is_current END,
        updated_at=datetime('now')`,
   ).bind(
@@ -52,6 +53,7 @@ export async function onRequestPost({ request, env }) {
     body.price_special == null ? null : Number(body.price_special),
     body.stock == null ? null : Number(body.stock),
     setCurrent,
+    body.photo_path?.trim() || null,
     setCurrent,
   ).run();
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Photo, Squiggle, Stamp } from './primitives.jsx';
-import { publicApi } from '../lib/api.js';
+import { mediaUrl, publicApi } from '../lib/api.js';
 
 function formatMonthLabel(monthIso) {
   if (!monthIso) return '';
@@ -46,7 +46,17 @@ export default function CigarOfTheMonth() {
       <div className="wrap">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.15fr', gap: 64, alignItems: 'center' }} className="cotm-grid">
           <div style={{ position: 'relative' }}>
-            <Photo label="Cigar of the Month" sub={cotm.name} style={{ height: 480 }} />
+            {cotm.photo_path ? (
+              <div style={{ height: 480, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--line)' }}>
+                <img
+                  src={mediaUrl(cotm.photo_path)}
+                  alt={cotm.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+              </div>
+            ) : (
+              <Photo label="Cigar of the Month" sub={cotm.name} style={{ height: 480 }} />
+            )}
             <div style={{ position: 'absolute', top: -14, left: -14 }}>
               <Stamp rot={-10}>{monthLabel ? `${monthLabel} Pick` : 'Pick of the month'}</Stamp>
             </div>

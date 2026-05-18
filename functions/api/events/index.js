@@ -4,7 +4,7 @@ import { json } from '../../_shared/response.js';
 export async function onRequestGet({ env }) {
   const { results } = await env.DB.prepare(
     `SELECT id, slug, title, blurb, start_at, end_at, price_text, seats_total,
-            tag, tag_kind, featured
+            tag, tag_kind, featured, photo_path
      FROM events
      WHERE published = 1
        AND (end_at IS NULL OR datetime(end_at) >= datetime('now'))

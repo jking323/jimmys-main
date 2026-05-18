@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { adminApi } from '../lib/api.js';
+import PhotoUpload from '../components/PhotoUpload.jsx';
 
 function currentMonth() {
   const d = new Date();
@@ -20,6 +21,7 @@ const EMPTY = {
   price_special: '',
   stock: '',
   set_current: true,
+  photo_path: null,
 };
 
 export default function Cotm() {
@@ -65,6 +67,7 @@ export default function Cotm() {
       price_special: row.price_special ?? '',
       stock: row.stock ?? '',
       set_current: !!row.is_current,
+      photo_path: row.photo_path || null,
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -78,6 +81,7 @@ export default function Cotm() {
         price_regular: form.price_regular === '' ? null : Number(form.price_regular),
         price_special: form.price_special === '' ? null : Number(form.price_special),
         stock: form.stock === '' ? null : Number(form.stock),
+        photo_path: form.photo_path || null,
       });
       setSuccess('Saved.');
       load();
@@ -167,6 +171,23 @@ export default function Cotm() {
             <input type="checkbox" checked={form.set_current} onChange={bind('set_current')} />
             <span>Make this the current pick on the homepage</span>
           </label>
+          <div className="full" style={{ marginTop: 14 }}>
+            <div className="eyebrow brass" style={{ marginBottom: 10 }}>Photo</div>
+            {form.month && /^\d{4}-\d{2}$/.test(form.month) ? (
+              <PhotoUpload
+                pathPrefix={`cotm/${form.month}`}
+                currentPath={form.photo_path}
+                hint="Dramatic single-cigar shot, low light. Saved with the rest of the form."
+                onUploaded={async (path) => setForm((f) => ({ ...f, photo_path: path }))}
+                onCleared={async () => {
+                  if (form.photo_path) await adminApi.deleteMedia(form.photo_path).catch(() => {});
+                  setForm((f) => ({ ...f, photo_path: null }));
+                }}
+              />
+            ) : (
+              <p className="mute" style={{ fontSize: 13 }}>Enter a valid month (YYYY-MM) above to enable photo upload.</p>
+            )}
+          </div>
         </div>
         <div style={{ marginTop: 22, display: 'flex', justifyContent: 'flex-end' }}>
           <button type="submit" disabled={saving} className="btn btn-primary" style={{ padding: '12px 20px' }}>

@@ -23,7 +23,7 @@ export async function onRequestGet({ request, env }) {
   const sql = `SELECT id, pos_id, sku, pos_name, display_name, brand, pos_vendor, pos_category,
                       vitola, origin, wrapper, strength, tasting_notes,
                       qty, price, cost, show_on_site, featured, sort_order,
-                      slug, last_synced_at, removed_at, first_seen_at, updated_at
+                      slug, photo_path, last_synced_at, removed_at, first_seen_at, updated_at
                  FROM cigars
                 WHERE ${where.join(' AND ')}
                 ORDER BY show_on_site DESC, featured DESC, qty DESC

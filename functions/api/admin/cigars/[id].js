@@ -28,6 +28,7 @@ export async function onRequestPut({ request, params, env }) {
   const allowed = [
     'display_name', 'brand', 'vitola', 'origin', 'wrapper',
     'strength', 'tasting_notes', 'show_on_site', 'featured', 'sort_order',
+    'photo_path',
   ];
   const sets = [];
   const args = [];

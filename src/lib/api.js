@@ -37,8 +37,31 @@ export const publicApi = {
   rsvp: (id, data) => api.post(`/events/${id}/rsvp`, data),
   cotmCurrent: () => api.get('/cotm/current'),
   humidor: () => api.get('/humidor'),
+  hours: () => api.get('/hours'),
   newsletterSubscribe: (email) => api.post('/newsletter/subscribe', { email }),
 };
+
+export function mediaUrl(path, version) {
+  if (!path) return null;
+  const v = version ? `?v=${encodeURIComponent(version)}` : '';
+  return `/api/media/${path}${v}`;
+}
+
+export async function uploadMedia(targetPath, file) {
+  const res = await fetch(`/api/admin/upload?path=${encodeURIComponent(targetPath)}`, {
+    method: 'POST',
+    credentials: 'include',
+    body: file,
+  });
+  const isJson = res.headers.get('content-type')?.includes('application/json');
+  const data = isJson ? await res.json() : await res.text();
+  if (!res.ok) {
+    const err = new Error((isJson && data.error) || `Upload failed (${res.status})`);
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
 
 export const adminApi = {
   me: () => api.get('/auth/me'),
@@ -71,4 +94,11 @@ export const adminApi = {
   cigar: (id) => api.get(`/admin/cigars/${id}`),
   updateCigar: (id, data) => api.put(`/admin/cigars/${id}`, data),
   imports: () => api.get('/admin/inventory/imports'),
+
+  hours: () => api.get('/admin/hours'),
+  saveHours: (hours) => api.put('/admin/hours', { hours }),
+  upsertOverride: (override) => api.post('/admin/hours/overrides', override),
+  deleteOverride: (date) => api.del(`/admin/hours/overrides?date=${encodeURIComponent(date)}`),
+
+  deleteMedia: (path) => api.del(`/admin/upload?path=${encodeURIComponent(path)}`),
 };

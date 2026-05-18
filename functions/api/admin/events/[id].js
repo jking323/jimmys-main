@@ -38,7 +38,7 @@ export async function onRequestPut({ request, params, env }) {
     `UPDATE events SET
        title = ?, blurb = ?, start_at = ?, end_at = ?, price_text = ?,
        seats_total = ?, tag = ?, tag_kind = ?, featured = ?, published = ?,
-       updated_at = datetime('now')
+       photo_path = ?, updated_at = datetime('now')
      WHERE id = ?`,
   ).bind(
     body.title.trim(),
@@ -51,6 +51,7 @@ export async function onRequestPut({ request, params, env }) {
     body.tag_kind || null,
     featured,
     body.published === false ? 0 : 1,
+    body.photo_path?.trim() || null,
     id,
   ).run();
 

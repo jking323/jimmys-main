@@ -4,7 +4,7 @@ import { badRequest, json } from '../../../_shared/response.js';
 export async function onRequestGet({ env }) {
   const { results } = await env.DB.prepare(
     `SELECT id, slug, title, blurb, start_at, end_at, price_text, seats_total,
-            tag, tag_kind, featured, published, created_at, updated_at
+            tag, tag_kind, featured, published, photo_path, created_at, updated_at
      FROM events
      ORDER BY start_at DESC`,
   ).all();
@@ -40,8 +40,8 @@ export async function onRequestPost({ request, env }) {
 
   const res = await env.DB.prepare(
     `INSERT INTO events (slug, title, blurb, start_at, end_at, price_text,
-                         seats_total, tag, tag_kind, featured, published)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                         seats_total, tag, tag_kind, featured, published, photo_path)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).bind(
     slug,
     body.title.trim(),
@@ -54,6 +54,7 @@ export async function onRequestPost({ request, env }) {
     body.tag_kind || null,
     featured,
     body.published === false ? 0 : 1,
+    body.photo_path?.trim() || null,
   ).run();
 
   const id = res.meta?.last_row_id;
