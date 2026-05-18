@@ -11,6 +11,6 @@ CREATE TABLE business_location (
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- Seed with the wireframe address (1220 W New Haven Ave, West Melbourne FL).
+-- Seed with the lounge's pin (Plus Code 39H5+J7, West Melbourne FL).
 INSERT INTO business_location (id, lat, lng, zoom, label) VALUES
-  (1, 28.0668, -80.6520, 16, 'Jimmy''s Cigar Lounge');
+  (1, 28.0791, -80.6418, 16, 'Jimmy''s Cigar Lounge');
