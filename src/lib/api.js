@@ -38,6 +38,7 @@ export const publicApi = {
   cotmCurrent: () => api.get('/cotm/current'),
   humidor: () => api.get('/humidor'),
   hours: () => api.get('/hours'),
+  siteAssets: () => api.get('/site-assets'),
   newsletterSubscribe: (email) => api.post('/newsletter/subscribe', { email }),
 };
 
@@ -99,6 +100,10 @@ export const adminApi = {
   saveHours: (hours) => api.put('/admin/hours', { hours }),
   upsertOverride: (override) => api.post('/admin/hours/overrides', override),
   deleteOverride: (date) => api.del(`/admin/hours/overrides?date=${encodeURIComponent(date)}`),
+
+  siteAssets: () => api.get('/admin/site-assets'),
+  setSiteAsset: (key, data) => api.put(`/admin/site-assets/${encodeURIComponent(key)}`, data),
+  clearSiteAsset: (key) => api.del(`/admin/site-assets/${encodeURIComponent(key)}`),
 
   deleteMedia: (path) => api.del(`/admin/upload?path=${encodeURIComponent(path)}`),
 };

@@ -14,6 +14,7 @@ import Cigars from './Cigars.jsx';
 import CigarEditor from './CigarEditor.jsx';
 import Imports from './Imports.jsx';
 import Hours from './Hours.jsx';
+import Photos from './Photos.jsx';
 
 export default function AdminApp() {
   const [user, setUser] = useState(null);
@@ -68,6 +69,7 @@ export default function AdminApp() {
         <Route path="inventory" element={<Imports />} />
         <Route path="cotm" element={<Cotm />} />
         <Route path="hours" element={<Hours />} />
+        <Route path="photos" element={<Photos />} />
         <Route path="newsletter" element={<Newsletter />} />
         <Route path="login" element={<Navigate to=".." replace />} />
         <Route path="*" element={<Navigate to="." replace />} />

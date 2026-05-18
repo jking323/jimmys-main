@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Photo, SectionHead } from './primitives.jsx';
-import { publicApi } from '../lib/api.js';
+import { mediaUrl, publicApi } from '../lib/api.js';
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -54,15 +54,18 @@ function Hours({ hours, today }) {
 
 export default function Visit() {
   const [data, setData] = useState(null);
+  const [assets, setAssets] = useState({});
 
   useEffect(() => {
     publicApi.hours()
       .then(setData)
       .catch(() => setData({ hours: [], status: { is_open: false, today_dow: new Date().getDay() } }));
+    publicApi.siteAssets().then((d) => setAssets(d.assets || {})).catch(() => {});
   }, []);
 
   const hours = data?.hours || [];
   const status = data?.status || { is_open: false, today_dow: new Date().getDay() };
+  const map = assets['visit-map'];
 
   return (
     <section id="visit" className="section section-divider">
@@ -74,7 +77,17 @@ export default function Visit() {
         />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 40 }} className="visit-grid">
-          <Photo label="Map · West New Haven Ave" sub="static map · driving directions · pin Jimmy's" style={{ height: 480 }} />
+          {map ? (
+            <div style={{ height: 480, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--line)' }}>
+              <img
+                src={mediaUrl(map.photo_path)}
+                alt={map.alt_text || 'Jimmy\'s Cigar Lounge — West New Haven Ave'}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            </div>
+          ) : (
+            <Photo label="Map · West New Haven Ave" sub="static map · driving directions · pin Jimmy's" style={{ height: 480 }} />
+          )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
             <div>

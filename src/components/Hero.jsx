@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Photo, SmokeCurl, Stamp } from './primitives.jsx';
-import { publicApi } from '../lib/api.js';
+import { mediaUrl, publicApi } from '../lib/api.js';
 
 function formatTime12(hhmm) {
   if (!hhmm) return '';
@@ -32,7 +32,27 @@ function OpenIndicator() {
   );
 }
 
+function HeroSlot({ asset, label, sub, style }) {
+  if (asset?.photo_path) {
+    return (
+      <div style={{ ...style, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--line)' }}>
+        <img
+          src={mediaUrl(asset.photo_path)}
+          alt={asset.alt_text || label}
+          loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      </div>
+    );
+  }
+  return <Photo label={label} sub={sub} style={style} />;
+}
+
 export default function Hero() {
+  const [assets, setAssets] = useState({});
+  useEffect(() => {
+    publicApi.siteAssets().then((d) => setAssets(d.assets || {})).catch(() => {});
+  }, []);
   return (
     <section id="top" style={{ position: 'relative', padding: '72px 0 88px', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 80, right: -40, opacity: 0.5 }}>
@@ -76,12 +96,14 @@ export default function Hero() {
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto', gap: 14, position: 'relative' }}>
-            <Photo label="The Lounge" sub="wide shot · leather chairs, low light" style={{ gridColumn: '1 / -1', height: 280 }} />
-            <Photo label="The Humidor" sub="walk-in shelves" style={{ height: 200 }} />
-            <Photo label="A regular" sub="candid, low key" style={{ height: 200 }} />
-            <div style={{ position: 'absolute', top: -12, left: -22, transform: 'rotate(-8deg)' }}>
-              <Stamp rot={0}>Photos · drop in</Stamp>
-            </div>
+            <HeroSlot asset={assets['hero-lounge']} label="The Lounge" sub="wide shot · leather chairs, low light" style={{ gridColumn: '1 / -1', height: 280 }} />
+            <HeroSlot asset={assets['hero-humidor']} label="The Humidor" sub="walk-in shelves" style={{ height: 200 }} />
+            <HeroSlot asset={assets['hero-regular']} label="A regular" sub="candid, low key" style={{ height: 200 }} />
+            {!assets['hero-lounge'] && !assets['hero-humidor'] && !assets['hero-regular'] && (
+              <div style={{ position: 'absolute', top: -12, left: -22, transform: 'rotate(-8deg)' }}>
+                <Stamp rot={0}>Photos · drop in</Stamp>
+              </div>
+            )}
           </div>
         </div>
       </div>
