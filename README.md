@@ -49,6 +49,12 @@ To create the bucket the first time:
 npx wrangler r2 bucket create jimmys-media
 ```
 
+## Map
+
+The Visit section renders a dynamic Leaflet map with a brass-J marker matching the site monogram. Default style is Stadia Stamen Toner Lite (etched / vintage). Position, zoom, marker label, and style are editable at `/admin/location` with a live preview.
+
+Stadia rate-limits unauthenticated tile loads — for production traffic, sign up at [stadiamaps.com](https://client.stadiamaps.com/signup/) (free tier covers ~200k tile loads/month), generate an API key, and paste it into the Map &amp; location admin form. Be sure to add your site's hostname (e.g. `jimmys-lt9.pages.dev` and any custom domain) to the key's allow-list in the Stadia dashboard.
+
 ## Hours
 
 Hours are stored in `business_hours` (one row per day, 0=Sun .. 6=Sat) with `hours_overrides` for one-off changes (holidays, weather closures). The lounge's timezone is hardcoded to `America/New_York` in `functions/_shared/hours.js`.

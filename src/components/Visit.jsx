@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Photo, SectionHead } from './primitives.jsx';
+import LoungeMap from './LoungeMap.jsx';
 import { mediaUrl, publicApi } from '../lib/api.js';
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -52,20 +53,24 @@ function Hours({ hours, today }) {
   );
 }
 
+const DIRECTIONS_HREF = 'https://maps.google.com/?q=1220+West+New+Haven+Ave+West+Melbourne+FL+32904';
+
 export default function Visit() {
   const [data, setData] = useState(null);
   const [assets, setAssets] = useState({});
+  const [location, setLocation] = useState(null);
 
   useEffect(() => {
     publicApi.hours()
       .then(setData)
       .catch(() => setData({ hours: [], status: { is_open: false, today_dow: new Date().getDay() } }));
     publicApi.siteAssets().then((d) => setAssets(d.assets || {})).catch(() => {});
+    publicApi.location().then((d) => setLocation(d.location || null)).catch(() => {});
   }, []);
 
   const hours = data?.hours || [];
   const status = data?.status || { is_open: false, today_dow: new Date().getDay() };
-  const map = assets['visit-map'];
+  const mapFallback = assets['visit-map'];
 
   return (
     <section id="visit" className="section section-divider">
@@ -77,11 +82,13 @@ export default function Visit() {
         />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 40 }} className="visit-grid">
-          {map ? (
+          {location ? (
+            <LoungeMap location={location} directionsHref={DIRECTIONS_HREF} />
+          ) : mapFallback ? (
             <div style={{ height: 480, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--line)' }}>
               <img
-                src={mediaUrl(map.photo_path)}
-                alt={map.alt_text || 'Jimmy\'s Cigar Lounge — West New Haven Ave'}
+                src={mediaUrl(mapFallback.photo_path)}
+                alt={mapFallback.alt_text || "Jimmy's Cigar Lounge — West New Haven Ave"}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             </div>

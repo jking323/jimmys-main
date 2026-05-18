@@ -39,6 +39,7 @@ export const publicApi = {
   humidor: () => api.get('/humidor'),
   hours: () => api.get('/hours'),
   siteAssets: () => api.get('/site-assets'),
+  location: () => api.get('/location'),
   newsletterSubscribe: (email) => api.post('/newsletter/subscribe', { email }),
 };
 
@@ -104,6 +105,9 @@ export const adminApi = {
   siteAssets: () => api.get('/admin/site-assets'),
   setSiteAsset: (key, data) => api.put(`/admin/site-assets/${encodeURIComponent(key)}`, data),
   clearSiteAsset: (key) => api.del(`/admin/site-assets/${encodeURIComponent(key)}`),
+
+  location: () => api.get('/admin/location'),
+  saveLocation: (data) => api.put('/admin/location', data),
 
   deleteMedia: (path) => api.del(`/admin/upload?path=${encodeURIComponent(path)}`),
 };

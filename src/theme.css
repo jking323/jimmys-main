@@ -163,6 +163,26 @@ body::before {
 
 section[id] { scroll-margin-top: 88px; }
 
+/* ─────── Leaflet theming (lounge map) ─────── */
+.leaflet-container { background: var(--bg-elev); font-family: 'Manrope', sans-serif; }
+.leaflet-control-zoom a {
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+}
+.leaflet-control-zoom a:hover { background: var(--bg-elev) !important; color: var(--brass) !important; }
+.leaflet-control-attribution {
+  background: rgba(26, 20, 16, 0.72) !important;
+  color: var(--ink-mute) !important;
+  font-size: 10.5px !important;
+  padding: 2px 8px !important;
+  border-radius: 4px 0 0 0;
+}
+.leaflet-control-attribution a { color: var(--brass) !important; }
+:root.theme-light .leaflet-control-attribution {
+  background: rgba(255, 250, 240, 0.85) !important;
+}
+
 /* ─────── Admin portal ─────── */
 .admin-shell { min-height: 100vh; display: grid; grid-template-columns: 240px 1fr; }
 .admin-sidebar { background: var(--bg-elev); border-right: 1px solid var(--line); padding: 32px 22px; display: flex; flex-direction: column; gap: 28px; position: sticky; top: 0; height: 100vh; }
