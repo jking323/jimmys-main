@@ -40,6 +40,7 @@ export const publicApi = {
   hours: () => api.get('/hours'),
   siteAssets: () => api.get('/site-assets'),
   location: () => api.get('/location'),
+  launches: () => api.get('/launches'),
   newsletterSubscribe: (email) => api.post('/newsletter/subscribe', { email }),
 };
 
